@@ -35,7 +35,7 @@ class PerceptronClassifier:
         assert len(weights) == len(self.legalLabels);
         self.weights = weights;
 
-    def train( self, trainingData, trainingLabels, validationData, validationLabels ):
+    def train(self, trainingData, trainingLabels, validationData, validationLabels):
         """
         The training loop for the perceptron passes through the training data several
         times and updates the weight vector for each label based on classification errors.
@@ -51,11 +51,25 @@ class PerceptronClassifier:
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
+        print self.max_iterations
         for iteration in range(self.max_iterations):
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                util.raiseNotDefined()
+                current_label = trainingLabels[i] # y
+                max_label = "" # y'
+                max_score = float("-inf")
+                f = trainingData[i]
+                for label in validationLabels: # y''
+                    score = 0
+                    for feature in f:
+                        score += f[feature]*self.weights[label][feature]
+                    if score > max_score:
+                        max_score = score
+                        max_label = label
+                if max_label is not current_label:
+                    self.weights[current_label] += f
+                    self.weights[max_label] -= f
 
     def classify(self, data ):
         """
