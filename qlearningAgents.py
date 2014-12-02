@@ -62,10 +62,10 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
-        if len(self.getLegalActions(state))==0:
+        actions = self.getLegalActions(state)
+        if len(actions) == 0:
           return 0
-        all_states=[self.getQValue(state,action) for action in self.getLegalActions(state)]
-        return max(all_states)
+        return max([self.getQValue(state, action) for action in actions])
 
     def computeActionFromQValues(self, state):
         """
@@ -74,13 +74,11 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
-        if len(self.getLegalActions(state))==0:
+        if len(self.getLegalActions(state)) == 0:
           return None
         all_states = [self.getQValue(state,action) for action in self.getLegalActions(state)]
         value = max(all_states)
-        max_indexes = [action for action in self.getLegalActions(state) if self.getQValue(state,action)== value]
-
-
+        max_indexes = [action for action in self.getLegalActions(state) if self.getQValue(state,action) == value]
         return random.choice(max_indexes)
 
     def getAction(self, state):
@@ -178,11 +176,7 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        features = self.featExtractor.getFeatures(state, action)
-        total = 0
-        for feature in features:
-            total += features[feature]*self.weights[feature]
-        return total
+        return self.getWeights()*self.featExtractor.getFeatures(state, action)
 
     def update(self, state, action, nextState, reward):
         """
@@ -190,12 +184,10 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
-        print features
-        for feature in features:
-            max_value = self.computeValueFromQValues(nextState)
-            new_weight = self.alpha*(reward + self.discount*max_value - self.getQValue(state,action))
-            new_weight *= features[feature]
-            self.weights[feature] += new_weight
+        old_weights = self.weights.copy()
+        for feature, value in features.iteritems():
+            old_weights[feature] += self.alpha*((reward + self.discount*self.computeValueFromQValues(nextState)) - self.getQValue(state,action))*value
+        self.weights = old_weights.copy()
 
     def final(self, state):
         "Called at the end of each game."
