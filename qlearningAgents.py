@@ -64,7 +64,7 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         if len(self.getLegalActions(state))==0:
           return 0
-        all_states=[self.q_values[(state,action)] for action in self.getLegalActions(state)]
+        all_states=[self.getQValue(state,action) for action in self.getLegalActions(state)]
         return max(all_states)
 
     def computeActionFromQValues(self, state):
@@ -76,9 +76,9 @@ class QLearningAgent(ReinforcementAgent):
         "*** YOUR CODE HERE ***"
         if len(self.getLegalActions(state))==0:
           return None
-        all_states = [self.q_values[(state,action)] for action in self.getLegalActions(state)]
+        all_states = [self.getQValue(state,action) for action in self.getLegalActions(state)]
         value = max(all_states)
-        max_indexes = [action for action in self.getLegalActions(state) if self.q_values[(state,action)]== value]
+        max_indexes = [action for action in self.getLegalActions(state) if self.getQValue(state,action)== value]
 
 
         return random.choice(max_indexes)
@@ -190,10 +190,12 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
-        max_value = max([self.getQValue(state, action) for action in self.getLegalActions(state)])
-        new_weight = self.alpha*(reward + self.discount*max_value - self.getQValue(state,action))
-        new_weight *= features[(state, action)]
-        self.weights[(state, action)] += new_weight
+        print features
+        for feature in features:
+            max_value = self.computeValueFromQValues(nextState)
+            new_weight = self.alpha*(reward + self.discount*max_value - self.getQValue(state,action))
+            new_weight *= features[feature]
+            self.weights[feature] += new_weight
 
     def final(self, state):
         "Called at the end of each game."
