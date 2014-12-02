@@ -51,27 +51,24 @@ class PerceptronClassifier:
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
-        print self.max_iterations
         for iteration in range(self.max_iterations):
             print "Starting iteration ", iteration, "..."
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                current_label = trainingLabels[i] # y
                 max_label = "" # y'
-                max_score = float("-inf")
+                max_score = -100
                 f = trainingData[i]
                 for label in validationLabels: # y''
-                    score = 0
-                    for feature in f:
-                        score += f[feature]*self.weights[label][feature]
+                    w = self.weights[label]
+                    score = sum(value*w[feature] for feature, value in f.iteritems())
                     if score > max_score:
                         max_score = score
                         max_label = label
-                if max_label is not current_label:
-                    self.weights[current_label] += f
+                if max_label is not trainingLabels[i]:
+                    self.weights[trainingLabels[i]] += f
                     self.weights[max_label] -= f
 
-    def classify(self, data ):
+    def classify(self, data):
         """
         Classifies each datum as the label that most closely matches the prototype vector
         for that label.  See the project description for details.
