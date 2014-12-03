@@ -60,7 +60,9 @@ class PerceptronClassifier:
                 f = trainingData[i]
                 for label in validationLabels: # y''
                     w = self.weights[label]
-                    score = sum(value*w[feature] for feature, value in f.iteritems())
+                    score = 0
+                    for feature, value in f.iteritems():
+                        score += value*w[feature]
                     if score > max_score:
                         max_score = score
                         max_label = label
