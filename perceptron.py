@@ -14,6 +14,7 @@
 
 # Perceptron implementation
 import util
+import pdb
 PRINT = True
 
 class PerceptronClassifier:
@@ -58,7 +59,7 @@ class PerceptronClassifier:
                 max_label = "" # y'
                 max_score = -100
                 f = trainingData[i]
-                for label in validationLabels: # y''
+                for label in list(set(trainingLabels)): # y''
                     w = self.weights[label]
                     score = 0
                     for feature, value in f.iteritems():

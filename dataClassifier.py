@@ -22,6 +22,7 @@ import perceptron_pacman
 import samples
 import sys
 import util
+import pdb
 from pacman import GameState
 
 TEST_SET_SIZE = 100
@@ -74,10 +75,37 @@ def enhancedFeatureExtractorDigit(datum):
 
     ##
     """
-    features =  basicFeatureExtractorDigit(datum)
 
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    has_loop=False
+    run_dfs_hash={}
+    def run_dfs(x,y):
+        if x<0 or x>=DIGIT_DATUM_WIDTH:
+            return False
+        if y<0 or y>=DIGIT_DATUM_HEIGHT:
+            return False 
+
+        if datum.getPixel(x,y)==1:
+            return True
+
+        if (x,y) in run_dfs_hash.keys():
+            return run_dfs_hash[(x,y)]
+
+        run_dfs_hash[(x,y)]=True
+
+        run_dfs_hash[(x,y)]=run_dfs(x-1,y) and run_dfs(x+1,y) and run_dfs(x,y-1) and run_dfs(x,y+1)
+
+        return run_dfs_hash[(x,y)]
+
+
+    for x in range(DIGIT_DATUM_WIDTH):
+        for y in range(DIGIT_DATUM_HEIGHT):
+            if datum.getPixel(x,y)==0:
+                if run_dfs(x,y)==True:
+                    has_loop=True
+                    break
+
+    features =  basicFeatureExtractorDigit(datum)
+    features["has_loop"] =has_loop
 
     return features
 
