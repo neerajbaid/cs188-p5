@@ -83,7 +83,6 @@ def enhancedFeatureExtractorDigit(datum):
             return False
         if y<0 or y>=DIGIT_DATUM_HEIGHT:
             return False 
-
         if datum.getPixel(x,y)==1:
             return True
 
@@ -91,7 +90,6 @@ def enhancedFeatureExtractorDigit(datum):
             return run_dfs_hash[(x,y)]
 
         run_dfs_hash[(x,y)]=True
-
         run_dfs_hash[(x,y)]=run_dfs(x-1,y) and run_dfs(x+1,y) and run_dfs(x,y-1) and run_dfs(x,y+1)
 
         return run_dfs_hash[(x,y)]
@@ -150,8 +148,21 @@ def enhancedPacmanFeatures(state, action):
     It should return a counter with { <feature name> : <feature value>, ... }
     """
     features = util.Counter()
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    foods=state.getFood().asList()
+    pac=state.getPacmanPosition()
+    minD=10000000000
+    for food in foods:
+        d=util.manhattanDistance(food,pac)
+        minD=min(d,minD)
+    features["closest food"] = 1/minD
+
+    minD=10000000000
+    for ghost in state.getGhostPositions():
+        d=util.manhattanDistance(pac,ghost) 
+        minD=min(d,minD)
+
+    features["closes ghost"] = minD
+
     return features
 
 
@@ -191,18 +202,18 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
     (and you can modify the signature if you want).
     """
 
-    # Put any code here...
+    # Put any code  here...
     # Example of use:
-    # for i in range(len(guesses)):
-    #     prediction = guesses[i]
-    #     truth = testLabels[i]
-    #     if (prediction != truth):
-    #         print "==================================="
-    #         print "Mistake on example %d" % i
-    #         print "Predicted %d; truth is %d" % (prediction, truth)
-    #         print "Image: "
-    #         print rawTestData[i]
-    #         break
+    for i in range(len(guesses)):
+        prediction = guesses[i]
+        truth = testLabels[i]
+        if (prediction != truth):
+            print "==================================="
+            print "Mistake on example %d" % i
+            print "Predicted %d; truth is %d" % (prediction, truth)
+            print "Image: "
+            print rawTestData[i]
+            break
 
 
 ## =====================
