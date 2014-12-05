@@ -54,28 +54,18 @@ class PerceptronClassifierPacman(PerceptronClassifier):
                 max_label = "" # y'
                 data = trainingData[i]
                 datum,legalMoves=data
-                max_score=-100
+                max_score=-10000000
+                best_move=""
                 for l in legalMoves:
-                    score=datum[l]*self.weights
+                    score=0
+                    for feature in self.features:
+                        score+=datum[l][feature]*self.weights[feature]
                     if score > max_score:
                         max_score=score
                         best_move=l
+                if best_move=="":
+                    pdb.set_trace()
                 if best_move is not trainingLabels[i]:
+                    temp=self.weights
                     self.weights+=datum[trainingLabels[i]]
                     self.weights-=datum[best_move]
-
-                # pdb.set_trace()
-                # for label in validationLabels: # y''
-                #     w = self.weights["w"]
-                #     max_score = -100
-                #     for a, f in s[0].iteritems():
-                #         pdb.set_trace()
-                #         score = 0 
-                #         for feature, value in f.iteritems():
-                #             score += value*w
-                #         if score > max_score:
-                #             max_score = score
-                #             max_label = label
-                #     if max_label is not trainingLabels[i]:
-                #         self.weights["w"] += trainingLabels[i]
-                #         self.weights["w"] += s[max_label] 
