@@ -83,20 +83,18 @@ def enhancedFeatureExtractorDigit(datum):
             return False
         if y<0 or y>=DIGIT_DATUM_HEIGHT:
             return False 
-        if datum.getPixel(x,y)==1:
+        if datum.getPixel(x,y)==2 or datum.getPixel(x,y)==1:
             return True
 
-        if (x,y) in run_dfs_hash.keys():
-            return run_dfs_hash[(x,y)]
+        if (x,y) in visited.keys():
+            return True
 
-        run_dfs_hash[(x,y)]=True
-        run_dfs_hash[(x,y)]=run_dfs(x-1,y) and run_dfs(x+1,y) and run_dfs(x,y-1) and run_dfs(x,y+1)
-
-        return run_dfs_hash[(x,y)]
-
+        visited[(x,y)]=True
+        return run_dfs(x-1,y) and run_dfs(x+1,y) and run_dfs(x,y-1) and run_dfs(x,y+1)
 
     for x in range(DIGIT_DATUM_WIDTH):
         for y in range(DIGIT_DATUM_HEIGHT):
+            visited={}
             if datum.getPixel(x,y)==0:
                 if run_dfs(x,y)==True:
                     has_loop=True
@@ -221,7 +219,6 @@ def analysis(classifier, guesses, testLabels, testData, rawTestData, printImage)
             print "Predicted %d; truth is %d" % (prediction, truth)
             print "Image: "
             print rawTestData[i]
-            break
 
 
 ## =====================
